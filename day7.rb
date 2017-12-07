@@ -24,30 +24,35 @@ $n.each do |k,v|
 end
 
 $n.each do |k,v|
-  puts k if v['carried_by'] == false
+  puts "Part 1: #{k}" if v['carried_by'] == false
 end
 
 # PART 2
+$cnd  = Array.new
 
 def get_the_sum_of_my_sub_towers(tower_key)
   weight = 0
-  kids = Array.new
+  kids = Hash.new
   $n[tower_key]['lifting'].each do |v|
     w = get_the_sum_of_my_sub_towers(v)
-    kids << w
+    kids[v] = w
     weight+=w
-    #weight+= $n[tower_key]['weight'].to_i
   end
-  if kids.uniq.length > 1
-    print kids
-    puts "#{tower_key} is not balanced"
+
+  if kids.values.uniq.length > 1
+    ww = kids.values.select{|e| kids.values.count(e) ==1 }
+    ada = kids.values.select{|e| kids.values.count(e) >1 }
+    wwk = kids.select{|k,v| v == ww[0]}
+    adak = kids.select{|k,v| v == ada[0]}
+    diff = wwk.values[0] - adak.values[0]
+    res = $n[wwk.keys[0]]['weight'].to_i - diff
+    puts "Part 2: #{res}"
+    # We have found the answer, no point in searching further
+    exit
   end
   weight += $n[tower_key]['weight'].to_i
   return weight
 end
 
-$n['vmttcwe']['lifting'].each do |v|
-  f= $n[v]['weight'].to_i
-  r=get_the_sum_of_my_sub_towers(v)
-  puts "Key: #{v} Weigth: #{r}"
-end
+get_the_sum_of_my_sub_towers('cqmvs')
+
