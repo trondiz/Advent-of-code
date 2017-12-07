@@ -22,9 +22,12 @@ $n.each do |k,v|
     $n[l]['carried_by'] = k
   end
 end
-
+$p1 = ''
 $n.each do |k,v|
-  puts "Part 1: #{k}" if v['carried_by'] == false
+  if v['carried_by'] == false
+    puts "Part 1: #{k}"
+    $p1 = k
+  end
 end
 
 # PART 2
@@ -54,5 +57,5 @@ def get_the_sum_of_my_sub_towers(tower_key)
   return weight
 end
 
-get_the_sum_of_my_sub_towers('cqmvs')
+get_the_sum_of_my_sub_towers($p1)
 
