@@ -13,7 +13,9 @@ $max = n.keys.last.to_i
 $cstate = Hash.new
 $cdir = Hash.new
 
-def move_scanners(st, d)
+def move_scanners(state, dir)
+  st = Marshal.load Marshal::dump(state)
+  d = Marshal.load Marshal::dump(dir)
   st.each do |k,v|
     # Move scanners
     s=st[k].index("S")
@@ -36,18 +38,21 @@ def move_scanners(st, d)
 end
 
 def do_the_walk(state, dir)
+  st = Marshal.load Marshal::dump(state)
+  d = Marshal.load Marshal::dump(dir)
   pos = 0
+	caught = false
   while pos <= $max
-    if state[pos.to_s] && state[pos.to_s][0] == "S"
-			puts "#{pos} * #{state[pos.to_s].length}"
-      return true
+    if st[pos.to_s] && st[pos.to_s][0] == "S"
+			caught = true
+			break
     end
     pos+=1
-    bar = move_scanners(state, dir)
-    state = bar[0]
-    dir = bar[1]
+    bar = move_scanners(st, d)
+    st = bar[0]
+    d = bar[1]
   end
-	return false
+	return caught
 end
 
 n.each do |k,v|
@@ -61,23 +66,17 @@ puts $cstate
 # Game loop
 cc=0
 
-puts "STARTING\n\n\n"
-while cc < 100
-  # Reset state for each delay
-  caught = false
-  pos= 0
-  state = $cstate
-  dir  = $cdir
-  if ! do_the_walk($cstate, $cdir)
+while true
+  # set state for next delay
+  e=$cstate
+  r=$cdir
+  puts cc
+	if ! do_the_walk($cstate, $cdir)
     puts "Not caught! delay #{cc}"
     exit
   end
-  puts $cstate
-  puts $cdir
   foo = move_scanners($cstate, $cdir)
   $cstate=foo[0]
-  puts $cstate
   $cdir=foo[1]
-  puts $cdir
   cc+=1
 end

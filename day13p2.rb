@@ -17,8 +17,10 @@ while true
   caught = false
   pos = 0
   while pos <= n.length
-    # I move
+    # I mov
     if n[pos] && ((pos+delay) % ((n[pos]-1)*2) ==0)
+      puts "((#{pos}+#{delay} % ((#{n[pos]}-1)*2) ==0)"
+      puts pos
       caught = true
       break
     end
