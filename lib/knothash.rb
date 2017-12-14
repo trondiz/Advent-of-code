@@ -2,7 +2,6 @@ class Knothash
   def self.hash(string)
     n = Array.new
     i = 0
-    sum = 0
     string.split(//).each_with_index do |v,b|
       # Skip newlines
       next if v.ord == 10
@@ -45,9 +44,9 @@ class Knothash
       dense_hash[i]=0
     end
     ll = list.each_slice(16).to_a
-    ll.each_with_index do |v,i|
+    ll.each_with_index do |v,u|
       v.each do |w|
-        dense_hash[i] = dense_hash[i] ^ w
+        dense_hash[u] = dense_hash[u] ^ w
       end
     end
     return dense_hash
@@ -68,8 +67,8 @@ class Knothash
     num_hash.each_with_index do |v, i|
       a= v.to_s(16).rjust(2, '0')
       c= a.split(//)
-      c.each do |v|
-        b << v.hex.to_s(2).rjust(4, '0')
+      c.each do |r|
+        b << r.hex.to_s(2).rjust(4, '0')
       end
     end
     return b.map {|s| "#{s}"}.join('')
