@@ -66,7 +66,11 @@ class Knothash
     num_hash = hash(string)
     b = Array.new
     num_hash.each_with_index do |v, i|
-      b << v.to_s(2).rjust(4, '0')
+      a= v.to_s(16).rjust(2, '0')
+      c= a.split(//)
+      c.each do |v|
+        b << v.hex.to_s(2).rjust(4, '0')
+      end
     end
     return b.map {|s| "#{s}"}.join('')
   end
