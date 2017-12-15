@@ -1,19 +1,16 @@
 #!/usr/bin/ruby -w
 
 def gena(num)
-  a=num*16807
-  n = (a % 2147483647)
+  n = ((num*16807) % 2147483647)
 end
 
 def genb(num)
-  a = num*48271
-  n = (a % 2147483647)
+  n = ((num*48271) % 2147483647)
 end
 
 
 def genap2(num)
-  a=num*16807
-  n = (a % 2147483647)
+  n = ((num*16807) % 2147483647)
   if n % 4 == 0
     return n
   else
@@ -22,8 +19,7 @@ def genap2(num)
 end
 
 def genbp2(num)
-  a = num*48271
-  n = (a % 2147483647)
+  n = ((num*48271) % 2147483647)
   if n % 8 == 0
     return n
   else
@@ -31,8 +27,8 @@ def genbp2(num)
   end    
 end
 
-a=699
-b=124
+a=65
+b=8921
 sum=0
 # P1
 for i in 0..40000000
