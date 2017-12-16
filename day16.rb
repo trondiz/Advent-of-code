@@ -51,7 +51,7 @@ for g in 1..40
   else
     states << prog.join
   end
-	dance!(prog)
+  dance!(prog)
 end
 
 puts "Part 2: #{prog.join}"
