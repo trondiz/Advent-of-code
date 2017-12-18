@@ -1,5 +1,9 @@
 #!/usr/bin/ruby -w
 
+require 'date'
+
+start = DateTime.now.strftime('%Q')
+
 n = Array.new
 i = 0
 sum = 0
@@ -94,6 +98,7 @@ while true
 
     if state[cur_prog]['queue'].length == 0 && state[other_prog]['queue'].length == 0
       puts "Deadlock: #{counter}"
+      puts "Time(ms): #{DateTime.now.strftime('%Q').to_i-start.to_i}"
       exit
     end
   when 'jgz'
@@ -119,5 +124,3 @@ while true
   state[cur_prog]['i_pos'] += 1
   c+=1
 end
-puts "Sum: #{sum}"
-
