@@ -26,9 +26,6 @@ end
 
 # Shared stuff, putting in global for ease of access
 $queue = []
-$waiting = []
-$waiting[0] = false
-$waiting[1] = false
 $queue[0] = Array.new
 $queue[1] = Array.new
 $counter = 0
@@ -46,7 +43,6 @@ def run_prog(cur_prog)
     case $n[i_pos][0]
     when 'snd'
       $queue[other_prog] << read_val(i_pos, 1, register)
-      $waiting[other_prog] = false
       $counter +=1 if cur_prog == 1
     when 'set'
       register[$n[i_pos][1]] = read_val(i_pos, 2, register)
@@ -57,22 +53,14 @@ def run_prog(cur_prog)
     when 'mod'
         register[$n[i_pos][1]] %= read_val(i_pos, 2, register)
     when 'rcv'
-      #
-      b = 0
       while $queue[cur_prog].length == 0
-        # Sleep 0 to allow other thread to run while we wait. 
-        sleep 0
-        # I am waiting. Introducing delay before calling it
-        # to reduce chance of race condition. TODO: Remove delay
-        b +=1
-        if b > $n.length
-          $waiting[cur_prog] = true
-          if $waiting[other_prog]
-            return
-          end
+        # Sleep 0 to allow other thread to run while we wait.
+        # There is a race condition here!!!
+        sleep 0.00001
+        if $queue[other_prog].length == 0 && $queue[cur_prog].length == 0
+          return
         end
       end
-      $waiting[cur_prog] = false
       register[$n[i_pos][1]]  = $queue[cur_prog].shift.to_i
     when 'jgz'
       if read_val(i_pos, 1, register) > 0
