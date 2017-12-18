@@ -25,7 +25,6 @@ state[1]['i_pos'] = 0
 state[0]['register']['p'] = 0
 state[1]['register']['p'] = 1
 state[cur_prog]['i_pos'] = 0
-last_sound = 0
 counter = 0
 c=0
 while true
