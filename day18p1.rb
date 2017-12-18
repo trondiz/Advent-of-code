@@ -12,12 +12,10 @@ File.open("data", "r") do |f|
   end
 end
 
-cur_prog = 0
-state = Hash.new
 i_pos = 0
 last_sound = 0
+register = Hash.new
 while true
-  state[cur_prog]['register'] = Hash.new
   if i_pos < 0 || i_pos > n.length
     puts "Jumped off"
     exit
