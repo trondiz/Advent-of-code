@@ -1,5 +1,9 @@
 #!/usr/bin/ruby -w
 
+require 'date'
+
+start = DateTime.now.strftime('%Q').to_i
+
 # Shared stuff, putting in global for ease of access
 $queue = []
 $waiting = []
@@ -123,3 +127,4 @@ p2 = Thread.new{run_prog(1)}
 p1.join
 p2.join
 puts "Deadlock 2: #{$counter}"
+puts "Time(ms): #{DateTime.now.strftime('%Q').to_i - start}"
