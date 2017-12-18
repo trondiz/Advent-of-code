@@ -4,6 +4,26 @@ require 'date'
 
 start = DateTime.now.strftime('%Q').to_i
 
+# Init instructions
+$n = Array.new
+i = 0
+File.open("data", "r") do |f|
+  f.each_line do |l|
+    $n[i] = Array.new
+    l = l.strip
+    $n[i] = l.split(/ /)
+    i += 1
+  end
+end
+
+def read_val(pos, u, reg)
+  if $n[pos][u].match(/\d/)
+    return $n[pos][u].to_i
+  else
+    return reg[$n[pos][u]]
+  end
+end
+
 # Shared stuff, putting in global for ease of access
 $queue = []
 $waiting = []
@@ -13,73 +33,29 @@ $queue[0] = Array.new
 $queue[1] = Array.new
 $counter = 0
 
-# The program function
 def run_prog(cur_prog)
-  n = Array.new
-  i = 0
-  File.open("data", "r") do |f|
-    f.each_line do |l|
-      n[i] = Array.new
-      l = l.strip
-      n[i] = l.split(/ /)
-      i += 1
-    end
-  end
-
   i_pos = 0
   register = Hash.new
   register['p'] = cur_prog
-  if cur_prog == 1
-    other_prog = 0
-  else
-    other_prog = 1
-  end
+  cur_prog == 1 ? other_prog = 0 : other_prog = 1
   while true
-    if i_pos < 0 || i_pos > n.length
-      puts "Jumped off"
-      exit
-    end
-    # print n[i_pos]
     # Init all seen registers with 0
-    if ! register[n[i_pos][1]]
-      register[n[i_pos][1]] = 0
+    if ! register[$n[i_pos][1]]
+      register[$n[i_pos][1]] = 0
     end
-    #print register
-    #puts
-    case n[i_pos][0]
+    case $n[i_pos][0]
     when 'snd'
-      if n[i_pos][1].match(/\d/)
-        $queue[other_prog] << n[i_pos][1].to_i
-      else
-        $queue[other_prog] << register[n[i_pos][1]]
-      end
-      if cur_prog == 1
-        $counter += 1
-      end
+      $queue[other_prog] << read_val(i_pos, 1, register)
+      $waiting[other_prog] = false
+      $counter +=1 if cur_prog == 1
     when 'set'
-      if n[i_pos][2].match(/\d/)
-        register[n[i_pos][1]] = n[i_pos][2].to_i
-      else
-        register[n[i_pos][1]] = register[n[i_pos][2]].to_i
-      end   
+      register[$n[i_pos][1]] = read_val(i_pos, 2, register)
     when 'add'
-      if n[i_pos][2].match(/\d/)
-        register[n[i_pos][1]] +=  n[i_pos][2].to_i
-      else
-        register[n[i_pos][1]] +=  register[n[i_pos][2]].to_i
-      end 
+        register[$n[i_pos][1]] += read_val(i_pos, 2, register)
     when 'mul'
-      if n[i_pos][2].match(/\d/)
-        register[n[i_pos][1]] *= n[i_pos][2].to_i
-      else
-        register[n[i_pos][1]] *= register[n[i_pos][2]].to_i
-      end
+        register[$n[i_pos][1]] *= read_val(i_pos, 2, register)
     when 'mod'
-      if n[i_pos][2].match(/\d/)
-        register[n[i_pos][1]] %= n[i_pos][2].to_i
-      else
-        register[n[i_pos][1]] %= register[n[i_pos][2]].to_i
-      end
+        register[$n[i_pos][1]] %= read_val(i_pos, 2, register)
     when 'rcv'
       #
       b = 0
@@ -89,7 +65,7 @@ def run_prog(cur_prog)
         # I am waiting. Introducing delay before calling it
         # to reduce chance of race condition. TODO: Remove delay
         b +=1
-        if b > n.length
+        if b > $n.length
           $waiting[cur_prog] = true
           if $waiting[other_prog]
             return
@@ -97,24 +73,10 @@ def run_prog(cur_prog)
         end
       end
       $waiting[cur_prog] = false
-      register[n[i_pos][1]]  = $queue[cur_prog].shift.to_i
+      register[$n[i_pos][1]]  = $queue[cur_prog].shift.to_i
     when 'jgz'
-      if n[i_pos][1].match(/\d/)
-        if n[i_pos][2].match(/\d/)
-          i_pos += n[i_pos][2].to_i
-        else
-          i_pos += register[n[i_pos][2]].to_i
-        end
-        next
-      end
-      if register[n[i_pos][1]] > 0
-        #puts "I am at #{i_pos}"
-        if n[i_pos][2].match(/\d/)
-          i_pos += n[i_pos][2].to_i
-        else
-          i_pos += register[n[i_pos][2]]
-        end
-        #puts "Going to #{i_pos}"
+      if read_val(i_pos, 1, register) > 0
+        i_pos += read_val(i_pos, 2, register)
         next
       end
     end
