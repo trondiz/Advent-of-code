@@ -141,8 +141,6 @@ for int in 0..17
             if m[0] == img # get sub
               #puts "#{m[0]} matches #{img} and that gives #{m[1]}"
               o = (i*1.333333333333).round # offset, beware bugs be here. Add more 3's for more iterations if code break
-              puts i
-              puts o
               new[0+o] = Array.new if not new[0+o]
               new[0+o] << m[1][0]
               new[1+o] = Array.new if not new[1+o]
@@ -162,6 +160,12 @@ for int in 0..17
       image = dp(new.map{|b|b.flatten})
     end
   end
+  puts "\e[H\e[2J"
+  image.each do |h|
+    puts h.join
+  end
+  sleep 1
+puts "\e[H\e[2J"
 end
 s = 0
 image.each do |h|
@@ -169,4 +173,6 @@ image.each do |h|
     s +=1 if g == "#"
   end
 end
+
 puts s
+
